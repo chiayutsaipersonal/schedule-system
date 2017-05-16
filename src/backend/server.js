@@ -1,23 +1,50 @@
 import dotenv from 'dotenv';
 import express from 'express';
-import path from 'path';
 
 import logger from './utilities/logger.js';
 import system from './config/system.js';
-import sqlite from './config/sqlite.js';
+import db from './models/database.js';
 
 const app = express();
 const main = express.Router();
 app.use(`/${system.reference}`, main);
 
+// default error handlers
 dotenv.config(); // loads .env file from root of project
+if (app.get('env') === 'development') {
+    app.use((error, request, response, next) => {
+        logger.error('DEFAULT DEVELOPMENT ERROR HANDLER MIDDLEWARE TRIGGERED');
+        response.status(error.status || 500);
+        response.json({
+            message: error.message,
+            error: error
+        });
+    });
+}
+if (app.get('env') === 'production') {
+    app.use((error, request, response, next) => {
+        logger.error('DEFAULT PRODUCTION ERROR HANDLER MIDDLEWARE TRIGGERED');
+        response.status(error.status || 500);
+        response.json({
+            message: error.message,
+            error: {}
+        });
+    });
+}
 
-app.listen(system.server.port, (error) => { // start backend server
-    if (error) {
-        logger.error(`error starting ${system.reference} server: ${error}`);
-    } else {
-        logger.info(`${system.reference} server is in operation... (${system.server.baseUrl})`);
-    }
+// reference routes
+main.use('/', require('./routes/reference/common.js')); // common reference tables
+
+db.initialize().then(() => { // initialize database models
+    app.listen(system.server.port, (error) => { // start backend server
+        if (error) {
+            logger.error(`error starting ${system.reference} server: ${error}`);
+        } else {
+            logger.info(`${system.reference} server is in operation... (${system.server.baseUrl})`);
+        }
+    });
+}).catch((error) => {
+    logger.error(`${system.reference} server could not initialize database: ${error}`);
 });
 
 /*
@@ -39,28 +66,6 @@ main.use(bodyParser.json()); // parse application/json
 main.use('/', express.static(path.join(__dirname, '/../public'))); // frontend client server route
 main.use('/bower_components', express.static(path.join(__dirname, '/../bower_components'))); // serve bower packages
 
-// default error handlers
-if (app.get('env') === 'development') {
-    app.use((error, request, response, next) => {
-        // logger.error('DEFAULT DEVELOPMENT ERROR HANDLER MIDDLEWARE TRIGGERED');
-        response.status(error.status || 500);
-        response.json({
-            message: error.message,
-            error: error
-        });
-    });
-}
-if (app.get('env') === 'production') {
-    app.use((error, request, response, next) => {
-        // logger.error('DEFAULT PRODUCTION ERROR HANDLER MIDDLEWARE TRIGGERED');
-        response.status(error.status || 500);
-        response.json({
-            message: error.message,
-            error: {}
-        });
-    });
-}
-
 // Handlebars templating engine test route
 app.engine('.hbs', exphbs({
     defaultLayout: 'main',
@@ -78,9 +83,6 @@ main.get('/templateTest', (request, response) => {
         title: appTitle
     });
 });
-
-// reference routes
-// main.use('/', require('./routes/reference/common.js')); // common reference tables
 
 // data routes
 // main.use('/', require('./routes/data/smartsheet/workspaces.js'));

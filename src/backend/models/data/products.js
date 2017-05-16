@@ -7,14 +7,14 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true,
             validate: { isUUID: 4 }
         },
+        reference: {
+            type: DataTypes.STRING,
+            allowNull: false
+        },
         jobId: {
             type: DataTypes.UUID,
             allowNull: false,
             validate: { isUUID: 4 }
-        },
-        reference: {
-            type: DataTypes.STRING,
-            allowNull: false
         },
         upgPrdCode: {
             // UPG 內部產品編號

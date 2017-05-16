@@ -7,17 +7,17 @@ module.exports = (sequelize, DataTypes) => {
             primaryKey: true,
             validate: { isUUID: 4 }
         },
-        jobTypeId: {
-            type: DataTypes.INTEGER,
-            allowNull: false
-        },
         reference: {
             type: DataTypes.STRING,
             allowNull: false
         },
+        jobTypeId: {
+            type: DataTypes.INTEGER,
+            allowNull: true
+        },
         clientId: {
             type: DataTypes.UUID,
-            allowNull: false,
+            allowNull: true,
             validate: { isUUID: 4 }
         },
         description: {
@@ -31,27 +31,27 @@ module.exports = (sequelize, DataTypes) => {
         },
         observable: {
             type: DataTypes.BOOLEAN,
-            allowNull: false,
+            allowNull: true,
             defaultValue: false
         },
         createdAt: {
             type: DataTypes.DATE,
-            allowNull: false,
+            allowNull: true,
             defaultValue: DataTypes.NOW
         },
         createdBy: {
             type: DataTypes.UUID,
-            allowNull: false,
+            allowNull: true,
             validate: { isUUID: 4 }
         },
         updatedAt: {
             type: DataTypes.DATE,
-            allowNull: false,
+            allowNull: true,
             defaultValue: DataTypes.NOW
         },
         updatedBy: {
             type: DataTypes.UUID,
-            allowNull: false,
+            allowNull: true,
             validate: { isUUID: 4 }
         },
         deletedAt: {
@@ -75,10 +75,6 @@ module.exports = (sequelize, DataTypes) => {
 /*
 import Sequelize from 'sequelize';
 import { sequelize } from '../../config/database.js';
-
-import { JobTypes } from '../reference/jobTypes.js';
-import { Clients } from '../reference/clients.js';
-import { Personnel } from '../reference/personnel.js';
 
 export const Jobs = sequelize.define('jobs', {
     id: {
@@ -150,11 +146,5 @@ export const Jobs = sequelize.define('jobs', {
         plural: 'jobs'
     }
 });
-
-Jobs.hasOne(JobTypes, { foreignKey: 'FK_jobs_jobTypes', sourceKey: 'jobTypeId', targetKey: 'id' });
-Jobs.belongsTo(Clients, { foreignKey: 'FK_jobs_clients', sourceKey: 'clientId', targetKey: 'id' });
-Jobs.hasOne(Personnel, { foreignKey: 'FK_jobs_personnel_createdBy', sourceKey: 'createdBy', targetKey: 'id' });
-Jobs.hasOne(Personnel, { foreignKey: 'FK_jobs_personnel_updatedBy', sourceKey: 'updatedBy', targetKey: 'id' });
-Jobs.hasOne(Personnel, { foreignKey: 'FK_jobs_personnel_deletedBy', sourceKey: 'deletedBy', targetKey: 'id' });
 
 */
