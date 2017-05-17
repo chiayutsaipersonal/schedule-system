@@ -2,13 +2,14 @@ import system from '../config/system.js';
 
 // middleware functions to deal with failed requests
 module.exports = (error, request, response, next) => {
+    console.log('====================failure========================');
     let responseObject = {
         method: request.method,
         endpoint: `${request.protocol}://${system.server.host}:${system.server.port}${request.originalUrl}`,
         success: false,
         status: response.statusCode,
         data: response.customData,
-        messsage: response.customMessage || error
+        message: response.customMessage || error
     };
     let cannedMessage = null;
     let defaultData = null;

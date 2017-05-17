@@ -1,15 +1,13 @@
 import fs from 'fs';
 import path from 'path';
 import Sequelize from 'sequelize';
+
 import sqlite from '../config/sqlite.js';
+import stringFunctions from '../utilities/stringFunctions.js';
 
 const db = {};
 const sequelize = new Sequelize(sqlite);
 const modelCategories = ['reference', 'data'];
-
-function toCap(string) {
-    return string.charAt(0).toUpperCase() + string.slice(1);
-}
 
 modelCategories.forEach((category) => {
     db[category] = [];
@@ -17,7 +15,7 @@ modelCategories.forEach((category) => {
         .filter((file) => {
             return (file.indexOf('.') !== 0) && (file.slice(-3) === '.js');
         }).forEach((file) => {
-            let moduleName = toCap(file.slice(0, -3));
+            let moduleName = stringFunctions.captialize(file.slice(0, -3));
             db[category].push(moduleName);
             db[moduleName] = require(path.join(__dirname, `${category}\\`, file))(sequelize, Sequelize);
         });

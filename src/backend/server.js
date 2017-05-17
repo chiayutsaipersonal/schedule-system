@@ -9,7 +9,7 @@ const app = express();
 const main = express.Router();
 app.use(`/${system.reference}`, main);
 
-// default error handlers
+// default routing error handlers
 dotenv.config(); // loads .env file from root of project
 if (app.get('env') === 'development') {
     app.use((error, request, response, next) => {
@@ -36,12 +36,18 @@ if (app.get('env') === 'production') {
 main.use('/', require('./routes/reference/common.js')); // common reference tables
 
 db.initialize().then(() => { // initialize database models
-    app.listen(system.server.port, (error) => { // start backend server
-        if (error) {
-            logger.error(`error starting ${system.reference} server: ${error}`);
-        } else {
-            logger.info(`${system.reference} server is in operation... (${system.server.baseUrl})`);
-        }
+    return db.JobTypes.create({
+        reference: '新開發案',
+        active: true,
+        displaySequence: 0
+    }).then(() => {
+        app.listen(system.server.port, (error) => { // start backend server
+            if (error) {
+                logger.error(`error starting ${system.reference} server: ${error}`);
+            } else {
+                logger.info(`${system.reference} server is in operation... (${system.server.baseUrl})`);
+            }
+        });
     });
 }).catch((error) => {
     logger.error(`${system.reference} server could not initialize database: ${error}`);
