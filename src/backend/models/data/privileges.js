@@ -26,14 +26,29 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: false,
             defaultValue: DataTypes.NOW
         },
+        createdBy: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            validate: { isUUID: 4 }
+        },
         updatedAt: {
             type: DataTypes.DATE,
             allowNull: false,
             defaultValue: DataTypes.NOW
         },
+        updatedBy: {
+            type: DataTypes.UUID,
+            allowNull: false,
+            validate: { isUUID: 4 }
+        },
         deletedAt: {
             type: DataTypes.DATE,
             allowNull: true
+        },
+        deletedBy: {
+            type: DataTypes.UUID,
+            allowNull: true,
+            validate: { isUUID: 4 }
         }
     }, {
         name: {
@@ -43,46 +58,3 @@ module.exports = (sequelize, DataTypes) => {
     });
     return Privileges;
 };
-
-/*
-import Sequelize from 'sequelize';
-import { sequelize } from '../../config/database.js';
-
-export const Privileges = sequelize.define('privileges', {
-    id: {
-        type: Sequelize.STRING,
-        allowNull: false,
-        primaryKey: true,
-        validate: { isUUID: 4 }
-    },
-    privilegeTypeId: { // 權限種類 (例：客戶、員工、廠商)
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        validate: { min: 0 }
-    },
-    privilegeRoleId: { // 工作角色 (例：管理員、使用者、主管)
-        type: Sequelize.INTEGER,
-        allowNull: false,
-        validate: { min: 0 }
-    },
-    active: {
-        type: Sequelize.BOOLEAN,
-        allowNull: false,
-        defaultValue: false
-    },
-    createdAt: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.NOW
-    },
-    updatedAt: {
-        type: Sequelize.DATE,
-        allowNull: false,
-        defaultValue: Sequelize.NOW
-    },
-    deletedAt: {
-        type: Sequelize.DATE,
-        allowNull: true
-    }
-});
-*/
